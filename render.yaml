@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: ai-generator-video-auto
+    runtime: docker
+    plan: starter
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000
+      - key: TTS_PROVIDER
+        value: omnivoice
+      - key: WORKER_POLL_INTERVAL_MS
+        value: 15000
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_OWNER_CHAT_ID
+        sync: false
+      - key: WAKE_TOKEN
+        generateValue: true

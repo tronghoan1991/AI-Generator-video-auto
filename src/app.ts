@@ -25,6 +25,7 @@ async function main(): Promise<void> {
 
   await runner.start();
   startHttpServer({
+    host: config.httpHost,
     port: config.httpPort,
     wakeToken: config.wakeToken,
     runner,

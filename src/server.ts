@@ -4,6 +4,7 @@ import { JobRunner } from "./jobs/job-runner.js";
 import { JobStore } from "./jobs/job-store.js";
 
 export function startHttpServer(args: {
+  host: string;
   port: number;
   wakeToken?: string;
   runner: JobRunner;
@@ -37,7 +38,7 @@ export function startHttpServer(args: {
     res.end(JSON.stringify({ ok: false, error: "not found" }));
   });
 
-  server.listen(args.port, () => {
-    console.log(`HTTP control server listening on :${args.port}`);
+  server.listen(args.port, args.host, () => {
+    console.log(`HTTP control server listening on ${args.host}:${args.port}`);
   });
 }

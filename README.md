@@ -97,10 +97,44 @@ TTS_PROVIDER=omnivoice
 OMNIVOICE_ENDPOINT=http://127.0.0.1:8123
 TELEGRAM_BOT_TOKEN=...
 TELEGRAM_OWNER_CHAT_ID=123456789
+HOST=0.0.0.0
 PORT=8080
 WAKE_TOKEN=...
 WORKER_POLL_INTERVAL_MS=15000
 ```
+
+## Deploy on Render (Docker Web Service)
+
+This repository now includes:
+
+- `Dockerfile` (production multi-stage build for TypeScript app)
+- `.dockerignore`
+- `render.yaml` (Render Blueprint)
+- `scripts/start-render.sh`
+
+### Render setup
+
+1. In Render, create a new **Blueprint** service from this repository (or create a Docker Web Service and keep the same env vars).
+2. Set required secrets:
+   - `TELEGRAM_BOT_TOKEN`
+   - `TELEGRAM_OWNER_CHAT_ID`
+3. Deploy. Render will check `GET /healthz`.
+
+### Cron-job keepalive/liveness ping
+
+Use Render Cron Jobs (or any external cron service) to ping:
+
+```bash
+curl "https://<your-render-service>/wake?token=<WAKE_TOKEN>"
+```
+
+You can also use:
+
+```bash
+curl "https://<your-render-service>/healthz"
+```
+
+for plain health checks.
 
 ## Lowest-friction Google Cloud deployment
 

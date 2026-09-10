@@ -30,6 +30,7 @@ function required(name: string): string {
 export interface ServiceConfig {
   telegramBotToken: string;
   telegramOwnerChatId: number;
+  httpHost: string;
   httpPort: number;
   wakeToken?: string;
   workerPollIntervalMs: number;
@@ -39,6 +40,7 @@ export function loadServiceConfig(): ServiceConfig {
   return {
     telegramBotToken: required("TELEGRAM_BOT_TOKEN"),
     telegramOwnerChatId: requiredInt("TELEGRAM_OWNER_CHAT_ID"),
+    httpHost: process.env.HOST?.trim() || "0.0.0.0",
     httpPort: intEnv("PORT", 8080),
     wakeToken: process.env.WAKE_TOKEN?.trim() || undefined,
     workerPollIntervalMs: intEnv("WORKER_POLL_INTERVAL_MS", 15000),
