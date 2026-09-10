@@ -2,12 +2,9 @@ import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, isAbsolute, join, resolve } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { pathToFileURL } from "node:url";
+import { templatesRoot } from "../paths.js";
 import { log } from "../utils/logger.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-/** Repo-root/templates — where vendored HyperFrames templates live. */
-const TEMPLATES_DIR = join(__dirname, "..", "..", "templates");
 
 export type Aspect = "16:9" | "9:16" | "1:1";
 
@@ -42,7 +39,7 @@ export interface ComposeArgs {
  */
 export async function composeTemplate(args: ComposeArgs): Promise<string> {
     const { templateId, inputs, fps = 30, quality = "standard", aspect } = args;
-    const templateDir = join(TEMPLATES_DIR, templateId);
+    const templateDir = join(templatesRoot, templateId);
     if (!existsSync(join(templateDir, "index.html"))) {
         throw new Error(`Template not found: ${templateDir}/index.html`);
     }

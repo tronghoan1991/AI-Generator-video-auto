@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { spawn, type ChildProcess } from "node:child_process";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { projectRoot } from "../paths.js";
 import { log } from "../utils/logger.js";
 import { JobStore } from "./job-store.js";
@@ -15,6 +16,14 @@ export interface JobRunnerOptions {
 
 function tailLines(input: string, maxLines = 25): string {
   return input.trim().split(/\r?\n/).slice(-maxLines).join("\n");
+}
+
+export function workerCommandArgs(scriptPath: string, modulePath = fileURLToPath(import.meta.url)): string[] {
+  const runtimeRoot = join(dirname(modulePath), "..");
+  if (modulePath.endsWith(".ts")) {
+    return ["--import", "tsx", join(runtimeRoot, "cli.ts"), scriptPath];
+  }
+  return [join(runtimeRoot, "cli.js"), scriptPath];
 }
 
 export class JobRunner {
@@ -93,7 +102,7 @@ export class JobRunner {
   }
 
   private async runJob(job: JobRecord): Promise<void> {
-    const commandArgs = ["--import", "tsx", "src/cli.ts", job.scriptPath];
+    const commandArgs = workerCommandArgs(job.scriptPath);
     const child = spawn(process.execPath, commandArgs, {
       cwd: projectRoot,
       env: process.env,
