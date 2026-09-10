@@ -3,11 +3,12 @@ import { existsSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { templatesRoot } from "../paths.js";
 import { log } from "../utils/logger.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-/** Repo-root/templates — where vendored HyperFrames templates live. */
-const TEMPLATES_DIR = join(__dirname, "..", "..", "templates");
+/** Repo-root/templates (or TEMPLATES_ROOT) — where vendored HyperFrames templates live. */
+const TEMPLATES_DIR = templatesRoot;
 
 export type Aspect = "16:9" | "9:16" | "1:1";
 

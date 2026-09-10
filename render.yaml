@@ -5,6 +5,10 @@ services:
     plan: starter
     healthCheckPath: /healthz
     autoDeploy: true
+    disk:
+      name: app-storage
+      mountPath: /var/data
+      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
@@ -14,8 +18,14 @@ services:
         value: 10000
       - key: TTS_PROVIDER
         value: omnivoice
+      - key: OMNIVOICE_ENDPOINT
+        sync: false
       - key: WORKER_POLL_INTERVAL_MS
         value: 15000
+      - key: DATA_ROOT
+        value: /var/data/data
+      - key: OUTPUT_ROOT
+        value: /var/data/output/telegram-jobs
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: TELEGRAM_OWNER_CHAT_ID
