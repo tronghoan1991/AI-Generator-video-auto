@@ -91,16 +91,18 @@ npm run pipeline -- /absolute/path/to/script.json
 ```
 
 ## Required environment
-
 ```env
 TTS_PROVIDER=omnivoice
 OMNIVOICE_ENDPOINT=http://127.0.0.1:8123
+TTS_CONCURRENCY=1
 TELEGRAM_BOT_TOKEN=...
 TELEGRAM_OWNER_CHAT_ID=123456789
 HOST=0.0.0.0
 PORT=8080
 WAKE_TOKEN=...
 WORKER_POLL_INTERVAL_MS=15000
+APP_DATA_ROOT=./data
+APP_OUTPUT_ROOT=./output/telegram-jobs
 ```
 
 ## Deploy on Render (Docker Web Service)
@@ -112,13 +114,19 @@ This repository now includes:
 - `render.yaml` (Render Blueprint)
 - `scripts/start-render.sh`
 
+The production image also includes the compiled `dist/` app plus the vendored `templates/` directory required by HyperFrames at runtime.
+
 ### Render setup
 
 1. In Render, create a new **Blueprint** service from this repository (or create a Docker Web Service and keep the same env vars).
-2. Set required secrets:
+2. Provision the included persistent disk so queue state and rendered outputs survive deploys/restarts:
+   - `APP_DATA_ROOT=/var/data/data`
+   - `APP_OUTPUT_ROOT=/var/data/output/telegram-jobs`
+3. Set required secrets/config:
+   - `OMNIVOICE_ENDPOINT` **must be a network-reachable OmniVoice base URL from Render** (do **not** leave it at `127.0.0.1` unless OmniVoice is running inside the same container)
    - `TELEGRAM_BOT_TOKEN`
    - `TELEGRAM_OWNER_CHAT_ID`
-3. Deploy. Render will check `GET /healthz`.
+4. Deploy. Render will check `GET /healthz`.
 
 ### Cron-job keepalive/liveness ping
 

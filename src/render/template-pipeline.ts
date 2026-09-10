@@ -5,6 +5,7 @@ import pLimit from "p-limit";
 import { TemplateScriptSchema, type TemplateScript } from "./template-script-schema.js";
 import { loadConfig } from "../config.js";
 import { createTtsClient } from "../tts/tts-client.js";
+import { sfxRoot } from "../paths.js";
 import {
   getDurationSec,
   concatWithSilence,
@@ -82,14 +83,13 @@ export async function runTemplatePipeline(scriptPath: string): Promise<void> {
 
   // STEP 5 — SFX selection + mix
   log.step(5, TOTAL_STEPS, "Pick + mix SFX");
-  const SFX_DIR = join(outputDir, "..", "..", "assets", "sfx");
-  const sfxIndex = existsSync(SFX_DIR) ? indexSfxLibrary(SFX_DIR) : {};
+  const sfxIndex = existsSync(sfxRoot) ? indexSfxLibrary(sfxRoot) : {};
   const sfxList: SfxMixSpec[] = [];
   for (const scene of script.scenes) {
     const startSec = sceneStarts[scene.id];
     if (scene.sfx) {
       if (scene.sfx.name === "none") continue;
-      const p = join(SFX_DIR, `${scene.sfx.name}.mp3`);
+      const p = join(sfxRoot, `${scene.sfx.name}.mp3`);
       if (existsSync(p)) sfxList.push({ path: p, startSec: startSec + scene.sfx.startOffsetSec, volume: scene.sfx.volume });
       continue;
     }
@@ -102,7 +102,7 @@ export async function runTemplatePipeline(scriptPath: string): Promise<void> {
     });
     if (!picked) continue;
     const pb = defaultPlayback(picked);
-    sfxList.push({ path: join(SFX_DIR, picked.relPath), startSec: startSec + pb.offsetSec, volume: pb.volume });
+    sfxList.push({ path: join(sfxRoot, picked.relPath), startSec: startSec + pb.offsetSec, volume: pb.volume });
   }
   await mixSfxOntoVoice(voiceRawMp3, sfxList, voiceMp3);
   const totalAudioSec = await getDurationSec(voiceMp3);
