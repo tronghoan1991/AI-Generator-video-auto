@@ -17,6 +17,14 @@ function tailLines(input: string, maxLines = 25): string {
   return input.trim().split(/\r?\n/).slice(-maxLines).join("\n");
 }
 
+export function getPipelineCommandArgs(rootDir = projectRoot): string[] {
+  const distCli = join(rootDir, "dist", "cli.js");
+  if (existsSync(distCli)) {
+    return [distCli];
+  }
+  return ["--import", "tsx", "src/cli.ts"];
+}
+
 export class JobRunner {
   private timer?: NodeJS.Timeout;
   private processing = false;
@@ -93,7 +101,7 @@ export class JobRunner {
   }
 
   private async runJob(job: JobRecord): Promise<void> {
-    const commandArgs = ["--import", "tsx", "src/cli.ts", job.scriptPath];
+    const commandArgs = [...getPipelineCommandArgs(), job.scriptPath];
     const child = spawn(process.execPath, commandArgs, {
       cwd: projectRoot,
       env: process.env,

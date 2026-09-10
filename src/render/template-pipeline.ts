@@ -15,6 +15,7 @@ import { indexSfxLibrary, pickSfxForScene, defaultPlayback } from "../assets/sfx
 import { composeTemplate } from "./template-composer.js";
 import { fitClipToDuration, concatVideos, muxAudioOntoVideo } from "./video-tools.js";
 import { log } from "../utils/logger.js";
+import { assetsRoot } from "../paths.js";
 
 const TOTAL_STEPS = 8;
 const SCENE_GAP_SEC = 0.3;
@@ -82,7 +83,7 @@ export async function runTemplatePipeline(scriptPath: string): Promise<void> {
 
   // STEP 5 — SFX selection + mix
   log.step(5, TOTAL_STEPS, "Pick + mix SFX");
-  const SFX_DIR = join(outputDir, "..", "..", "assets", "sfx");
+  const SFX_DIR = join(assetsRoot, "sfx");
   const sfxIndex = existsSync(SFX_DIR) ? indexSfxLibrary(SFX_DIR) : {};
   const sfxList: SfxMixSpec[] = [];
   for (const scene of script.scenes) {

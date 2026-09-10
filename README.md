@@ -94,13 +94,15 @@ npm run pipeline -- /absolute/path/to/script.json
 
 ```env
 TTS_PROVIDER=omnivoice
-OMNIVOICE_ENDPOINT=http://127.0.0.1:8123
+OMNIVOICE_ENDPOINT=http://127.0.0.1:8123 # local default; on Render use a reachable remote URL
 TELEGRAM_BOT_TOKEN=...
 TELEGRAM_OWNER_CHAT_ID=123456789
 HOST=0.0.0.0
 PORT=8080
 WAKE_TOKEN=...
 WORKER_POLL_INTERVAL_MS=15000
+DATA_ROOT=./data
+OUTPUT_ROOT=./output/telegram-jobs
 ```
 
 ## Deploy on Render (Docker Web Service)
@@ -118,7 +120,11 @@ This repository now includes:
 2. Set required secrets:
    - `TELEGRAM_BOT_TOKEN`
    - `TELEGRAM_OWNER_CHAT_ID`
-3. Deploy. Render will check `GET /healthz`.
+   - `OMNIVOICE_ENDPOINT` (must be reachable from Render, not localhost)
+3. Attach the Render Disk declared in `render.yaml` and keep:
+   - `DATA_ROOT=/var/data/data`
+   - `OUTPUT_ROOT=/var/data/output/telegram-jobs`
+4. Deploy. Render will check `GET /healthz`.
 
 ### Cron-job keepalive/liveness ping
 
